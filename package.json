@@ -1,0 +1,44 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "@react-native-community/masked-view": "0.1.10",
+    "@react-navigation/bottom-tabs": "~5.2.6",
+    "@react-navigation/drawer": "~5.9.0",
+    "@react-navigation/native": "~5.1.5",
+    "@react-navigation/stack": "~5.2.10",
+    "expo": "~42.0.1",
+    "expo-facebook": "^11.3.1",
+    "expo-firebase-recaptcha": "^1.4.2",
+    "expo-google-sign-in": "^9.2.1",
+    "expo-notifications": "~0.12.3",
+    "expo-permissions": "^12.1.1",
+    "expo-status-bar": "~1.0.4",
+    "firebase": "^8.10.0",
+    "lodash": "^4.17.21",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-animated-spinkit": "^1.5.2",
+    "react-native-code-input": "^1.0.6",
+    "react-native-country-picker-modal": "^2.0.0",
+    "react-native-easy-toast": "^2.0.0",
+    "react-native-elements": "^3.4.2",
+    "react-native-gesture-handler": "~1.10.2",
+    "react-native-reanimated": "~2.2.0",
+    "react-native-safe-area-context": "3.2.0",
+    "react-native-screens": "~3.4.0",
+    "react-native-web": "~0.13.12",
+    "react-native-webview": "^11.13.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0"
+  },
+  "private": true
+}
