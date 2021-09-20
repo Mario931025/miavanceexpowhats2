@@ -6,7 +6,18 @@ import RutasNoAutenticadas from './src/navegacion/RutasNoAutenticadas';
 import { cerrarsesion, validarsesion } from './src/utils/Acciones';
 import SwitchNavigator from './src/navegacion/SwitchNavigator';
 import Loading from './src/Componentes/Loading';
+import {encode,decode} from 'base-64'
 
+//tenemos que trabajar con la codificaicon correcta con firesotre
+
+
+if (!global.btoa) {
+  global.btoa = encode;
+}
+
+if (!global.atob) {
+  global.atob = decode;
+}
 
 export default function App() {
 

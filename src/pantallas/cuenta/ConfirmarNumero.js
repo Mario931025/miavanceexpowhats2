@@ -1,6 +1,6 @@
 
 import React,{useState,useRef} from 'react'
-import { View, Text,StyleSheet,Image } from 'react-native'
+import { View, Text,StyleSheet,Image,Alert } from 'react-native'
 import CodeInput from 'react-native-code-input'
 import {useNavigation} from '@react-navigation/native'
 import Loading from '../../Componentes/Loading'
@@ -19,7 +19,14 @@ export default function ConfirmarNumero(props) {
     const [loading, setloading] = useState(false);
 
     const confirmarCodigoSMS = async (code) => {
-         const token =  await obtenerToken()
+      setloading(true)
+
+      //verifica que el codido del sms que llega es el correcto
+      const resultado = await confirmarcodigo(verificationid,code)
+
+      if(resultado){
+
+        const token =  await obtenerToken()
 
         const {uid,displayName, photoURL, email, phoneNumber } = ObtenerUsuario()
   
@@ -32,6 +39,21 @@ export default function ConfirmarNumero(props) {
             phoneNumber,
             fechacreacion : new Date()
         })
+        setloading(false)
+
+      }else{
+        Alert.alert(
+          "Error",
+          "Favor validar el código introducio",[{
+            style:"default",
+            text: "Entendido"
+          }]
+        )
+
+        setloading(false)
+      }
+
+       
   
     };
 

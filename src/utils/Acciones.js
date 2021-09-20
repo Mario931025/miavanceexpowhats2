@@ -46,13 +46,15 @@ export const cerrarsesion = () => {
 
 export const validarPhone = (setphoneauth) => {
 
-    firebase.auth().onAuthStateChanged((user)=>{
+  db.collection("Usuarios")  //solo se aplica cuando el usuario mete # correctamente
+  .doc(ObtenerUsuario().uid)
+  .onSnapshot(snapshot => {
 
-        if(user.phoneNumber)
-        {
-            setphoneauth(true)
-        }
-    })
+    //metodo que ocupamos si la ruta existe o no
+    setphoneauth(snapshot.exists)
+
+  })  ///metodo que cuando detecta un cambio en la BD
+  
 }
 
 
