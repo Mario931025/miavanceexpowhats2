@@ -19,6 +19,9 @@ if (!global.atob) {
   global.atob = decode;
 }
 
+
+YellowBox.ignoreWarnings(["Animated","Setting a timer"])
+
 export default function App() {
 
  
