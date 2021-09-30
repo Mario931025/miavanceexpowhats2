@@ -7,24 +7,28 @@ export function validateEmail(email) {
       return re.test(email);
     }
 
-    export const cargarImagenesxAspecto = async (array) => {
-      //objeto de resultado
-      let imgResponse = { status: false, imagen: "" };
-      
-      const resultPermissions = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      const cameraPermissions = resultPermissions.permissions.cameraRoll.status;
-    
-      if (cameraPermissions === "denied") {
-        alert("Usted debe permitir el accesos para cargar las imagenes");
-      } else {
-        const result = await ImagePicker.launchImageLibraryAsync({
-          allowsEditing: true,
-          aspect: array,
-        });
-    
-        if (!result.cancelled) {
-          imgResponse = { status: true, imagen: result.uri };
-        }
-      }
-      return imgResponse;
-    };
+
+    export const cargarImagenesxAspecto = async (array) => {  
+       let imgResponse = { status: false, imagen: "" };  
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);  
+
+         if (status === "denied") {     
+           alert("Usted debe permitir el accesos para cargar las imagenes");  
+           } else {   
+               const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: array,});   
+                 if (!result.cancelled) { imgResponse = { status: true, imagen: result.uri };    
+                 }   } 
+                   return imgResponse; };
+
+
+//funcion que convierte la imagen a formato blob para subirla al server
+
+export const convertirFicheroBlobl = async (rutafisica)=>{
+  const fichero = await fetch(rutafisica);
+
+  //transforma a formato blob
+  const blob = await fichero.blob();
+
+  return blob;
+
+}

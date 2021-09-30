@@ -7,9 +7,11 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import 'firebase/firestore';
-
-
+import uuid from 'random-uuid-v4'
+//permite hacer iteracion de cada imagen
+import {map, result} from 'lodash'
 //para que se conecte a la BD
+import { convertirFicheroBlobl } from "./Uitl";
 
 const db = firebase.firestore(firebaseapp);
 
@@ -137,14 +139,16 @@ export const obtenerToken = async () => {
 
   //metodo para agregar registro a la DB
   //recibe el nombre de la coleccion, el documento , y los datos 
-
+  //merge coloca los nuevos datos en firestore en un documento
   export const addRegistroEspecifico = async (coleccion, doc, data) => {
     const resultado = { error: "", statusreponse: false,data: null };
   
     await db
       .collection(coleccion)
       .doc(doc)
-      .set(data)
+      .set(data ,{
+        merge: true
+      }) 
       .then((response) => {
         resultado.statusreponse = true;
       })
@@ -154,3 +158,70 @@ export const obtenerToken = async () => {
   
     return resultado;
   };
+
+
+  //FUNCION QUE SUBIR LA IMAGEN AL STORAGE DE FIREBASE
+//va a recibir un array de imagenes y la ruta que es en storage en carpeta de fotos de perfil
+  export const subirImagenesBatch = async (imagenes,ruta)=>{
+
+    //para subir imagenes a firebase necesitamos subirlas a formato blob (datos inmutables)
+    const imagenesurl = [];
+
+    //para que fluya el resto de la informacion en la aplicacion, sube una imagen y continua la aplicaicon 
+    await Promise.all(
+
+    map(imagenes, async(image)=> {
+      //convierte ka imagen en formato blob
+      const blob = await convertirFicheroBlobl(image);
+
+      //ruta para guardar la imagen en el storage en un lugar unico
+      const ref = firebase.storage().ref(ruta).child(uuid())
+
+      //sube la imagena  firebase 
+      //y obtenemos la ruta y el nombre uuid unico
+      await ref.put(blob)
+      .then(async(result)=>{
+        await firebase.storage()
+        .ref( `${ruta}/${result.metadata.name}`)
+        .getDownloadURL()  //metodo que obtiene url de firebase y ponerla en la ruta unica en el array de imagenes
+        .then((imagenurl)=>{
+          imagenesurl.push(imagenurl)
+        })
+      })
+
+    }));
+
+    return imagenesurl;
+
+  }
+
+export const actualizarPerfil = async (data)=>{
+  let respuesta = false;
+
+  await firebase.auth()
+  .currentUser.updateProfile(data)
+  .then((response)=>{
+    respuesta = true;
+  })
+
+  return respuesta
+}
+
+export const reautenticar = async (verificationId, code) => {
+  let response = { statusresponse: false };
+
+  const credenciales = new firebase.auth.PhoneAuthProvider.credential(
+    verificationId,
+    code
+  );
+
+  await firebase
+    .auth()
+    .currentUser.reauthenticateWithCredential(credenciales)
+    .then((resultado) => (response.statusresponse = true))
+    .catch((err) => {
+      console.log(err);
+    });
+
+  return response;
+};
