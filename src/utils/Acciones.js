@@ -225,3 +225,39 @@ export const reautenticar = async (verificationId, code) => {
 
   return response;
 };
+
+export const actualizaremailfirebase = async (email)=>{
+  let response = { statusreponse: false}
+  await firebase
+  .auth()
+  .currentUser.updateEmail(email)
+  .then((respuesta) => {
+    response.statusreponse = true
+  })
+  .catch((err)=> {
+    response.statusreponse = false
+  })
+
+  return response;
+}
+
+export const actualizarTelefono = async (verificationId, code) => {
+  let response = { statusresponse: false };
+  console.log(verificationId);
+  console.log(code);
+
+  const credenciales = new firebase.auth.PhoneAuthProvider.credential(
+    verificationId,
+    code
+  );
+
+  await firebase
+    .auth()
+    .currentUser.updatePhoneNumber(credenciales)
+    .then((resultado) => (response.statusresponse = true))
+    .catch((err) => {
+      console.log(err);
+    });
+
+  return response;
+};
