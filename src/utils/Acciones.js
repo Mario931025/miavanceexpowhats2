@@ -11,6 +11,7 @@ import uuid from 'random-uuid-v4'
 //permite hacer iteracion de cada imagen
 import {map, result} from 'lodash'
 //para que se conecte a la BD
+//para que se conecte a la BD
 import { convertirFicheroBlobl } from "./Uitl";
 
 const db = firebase.firestore(firebaseapp);
@@ -261,3 +262,5 @@ export const actualizarTelefono = async (verificationId, code) => {
 
   return response;
 };
+
+
