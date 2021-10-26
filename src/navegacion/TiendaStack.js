@@ -4,7 +4,7 @@ import React from 'react'
 //envonvolera los componentes de tienda de la capeta pantallas
 import {createStackNavigator} from '@react-navigation/stack'
 import Tienda from '../pantallas/tienda/Tienda'
-import AddProduct from '../pantallas/tienda/AddProduct'
+import AddProduct from '../pantallas/mitienda/AddProduct'
 import Contacto from '../pantallas/tienda/Contacto'
 import MensajesList from '../pantallas/tienda/MensajesList';
 import Detalle from '../pantallas/tienda/Detalle'

@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import MiTienda from '../pantallas/mitienda/MiTienda'
 import EditarProducto  from '../pantallas/mitienda/EditarProducto'
+import AddProduct from '../pantallas/mitienda/AddProduct'
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,7 @@ export default function MiTiendaStack() {
      >
          <Stack.Screen component={MiTienda} name="mitienda" options={{ title: "Mi Tienda"}} />
          <Stack.Screen component={EditarProducto} name="edit-product" options={{ title: "Editar Producto"}} />
-         
+         <Stack.Screen component= {AddProduct} name="add-product" options={{title:"Agrega Nuevo Producto",headerStyle:{backgroundColor:"#127C7E"},headerTintColor:"#fff"}}/>
      </Stack.Navigator>
         
     )
