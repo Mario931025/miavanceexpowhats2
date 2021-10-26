@@ -1,10 +1,12 @@
 import React,{useState,useRef} from 'react'
-import { View, Text,StyleSheet,Alert,TouchableOpacity } from 'react-native'
+import { View, Text,StyleSheet,Alert,TouchableOpacity,ScrollView } from 'react-native'
 import { Input,Image,Button,Icon,Avatar,AirbnbRating } from 'react-native-elements'
 import {map,size,filter,isEmpty} from'lodash';
 import { useNavigation } from '@react-navigation/native';
 import Loading from '../../Componentes/Loading'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+//para cargar imganes del producto
+import { cargarImagenesxAspecto} from '../../utils/Uitl'
 
 export default function AddProduct() {
 
@@ -74,6 +76,8 @@ export default function AddProduct() {
             <Text style={styles.textlabel}>
                 Cargar imagenes
             </Text>
+                <SubirImagenes imagenes={imagenes} setimagenes={setimagenes}/>
+
             <Text style={styles.textlabel}>
                 Asignar categoria
             </Text>
@@ -84,6 +88,63 @@ export default function AddProduct() {
             />
             
         </KeyboardAwareScrollView>
+    )
+}
+
+
+//funcion que sube imagenes
+function SubirImagenes(props) {
+    const { imagenes, setimagenes } = props;
+  
+    const removerimagen = (imagen) => {
+      Alert.alert(
+        "Eliminar Imagen",
+        "¿Estás Seguro de que quieres eliminar la imagen ?",
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
+          },
+          {
+            text: "Eliminar",
+            onPress: () => {
+              setimagenes(filter(imagenes, (imagenURL) => imagenURL !== imagen));
+            },
+          },
+        ]
+      );
+    };
+
+
+    return(
+        <ScrollView style={styles.viewimagenes} horizontal={true} showsHorizontalScrollIndicator={false}>
+            {
+                size(imagenes) < 5 && (
+                    <Icon
+                        type="material-community"
+                        name="plus"
+                        color="#7a7a7a"
+                        containerStyle={styles.containerIcon}
+                        onPress={async() => {
+                            const resultado = await cargarImagenesxAspecto([1,1])
+                            if(resultado.status){
+                                setimagenes([...imagenes,resultado.imagen])
+                            }
+                        }}
+                    />
+                )
+            }
+
+            {map(imagenes,(imagen,index)=> ( 
+                <Avatar
+                    key={index}
+                    style={styles.miniatura}
+                    source={{uri: imagen}}
+                    onPress={() => {removerimagen()}}
+                />
+            ))}
+
+        </ScrollView>
     )
 }
 
@@ -120,5 +181,26 @@ const styles = StyleSheet.create({
         marginTop:20,
         marginBottom:40,
         marginHorizontal:20
+    },
+    viewimagenes:{
+        flexDirection:"row",
+        marginHorizontal:20,
+        marginTop:30,
+        marginBottom:10
+    },
+    containerIcon:{
+        alignItems:"center",
+        justifyContent:"center",
+        marginRight:10,
+        height:150,
+        width:100,
+        backgroundColor:"#e3e3e3",
+        padding:10,
+    },
+    miniatura:{
+        width:100,
+        height:150,
+        marginRight:10,
+
     }
 })
