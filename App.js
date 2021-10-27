@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React,{useState,useEffect} from 'react';
-import { StyleSheet, Text, View, YellowBox } from 'react-native';
+import { LogBox, StyleSheet, Text, View, YellowBox } from 'react-native';
 import RutasAutenticadas from './src/navegacion/RutasAutenticadas';
 import RutasNoAutenticadas from './src/navegacion/RutasNoAutenticadas';
 import { cerrarsesion, validarsesion } from './src/utils/Acciones';
@@ -20,7 +20,7 @@ if (!global.atob) {
 }
 
 
-YellowBox.ignoreWarnings(["Animated","Setting a timer"])
+LogBox.ignoreAllLogs(["Animated","Setting a timer for a long period of time","old version"])
 
 export default function App() {
 

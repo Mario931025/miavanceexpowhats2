@@ -7,7 +7,7 @@ import Loading from '../../Componentes/Loading'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 //para cargar imganes del producto
 import { cargarImagenesxAspecto} from '../../utils/Uitl'
-
+import {subirImagenesBatch,addRegistroEspecifico,addRegistro,ObtenerUsuario} from '../../utils/Acciones'
 export default function AddProduct() {
 
     //guarda los valores de los campos
@@ -18,9 +18,84 @@ export default function AddProduct() {
     const [categoria, setcategoria] = useState("")
     const [errores, seterrores] = useState({})
     const [rating, setrating] = useState(5)
+    const [loading, setloading] = useState(false)
     const btnref = useRef()
     const navigation = useNavigation()
 
+    //se ba a subir a firebas el producto
+    const addProduct = async() => {
+        seterrores({})
+
+        if(isEmpty(titulo)) {
+            seterrores({titulo:"El campo titulo es obligatorio"})
+           
+        }else if(isEmpty(descripcion)){
+            seterrores({descripcion : "El campo descripción es obligatorio"})
+
+        }else if (!parseFloat(precio) > 0) {
+            seterrores({precio : "Introduzca un precio para el producto"})
+        }else if(isEmpty(categoria)){
+            Alert.alert("Seleccione una categoria","Favor seleccione una categoria para el producto o servicio",[
+                { 
+                    style:"cancel",
+                    text:"Entendido"
+                }
+            ])
+        }else if( isEmpty(imagenes)){
+            Alert.alert("Seleccione una imagen","Favor seleccione una imagen para el producto o servicio",[
+                { 
+                    style:"cancel",
+                    text:"Entendido"
+                }
+            ])
+        }else{
+            setloading(true)
+            const urlimagenes = await subirImagenesBatch(imagenes,"ImagenesProductos")
+            
+
+            const producto = {
+              titulo,
+              descripcion,
+              precio,
+              usuario: ObtenerUsuario().uid,
+              imagenes : urlimagenes,
+              status:1,
+              fechacreacion : new Date(),
+              rating,
+              categoria
+            }
+
+            const registarproducto = await addRegistro("Productos", producto);
+
+            if(registarproducto.statusreponse){
+              setloading(false);
+              Alert.alert(
+                "Registro Exitoso",
+                "El producto se ha registrado correctamente",
+                [
+                  {
+                    style: "cancel",
+                    text: "Aceptar",
+                    onPress: () => navigation.navigate("mitienda"),
+                  },
+                ]
+              );
+            }else{
+              setloading(false);
+
+        Alert.alert(
+          "Registro Fallido",
+          "Ha ocurrido un error al registrar producto",
+          [
+            {
+              style: "cancel",
+              text: "Aceptar",
+            },
+          ]
+        );
+            }
+        }
+    }
 
 
     return (
@@ -81,11 +156,14 @@ export default function AddProduct() {
             <Text style={styles.textlabel}>
                 Asignar categoria
             </Text>
+            <Botonera categoria={categoria} setcategoria={setcategoria}/>
             <Button
             title="Agregar nuevo producto"
             buttonStyle={styles.btnaddnew}
             ref={btnref}
+            onPress={addProduct}
             />
+            <Loading isVisible={loading} text="Favor espere"/>
             
         </KeyboardAwareScrollView>
     )
@@ -115,6 +193,7 @@ function SubirImagenes(props) {
       );
     };
 
+    
 
     return(
         <ScrollView style={styles.viewimagenes} horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -140,13 +219,84 @@ function SubirImagenes(props) {
                     key={index}
                     style={styles.miniatura}
                     source={{uri: imagen}}
-                    onPress={() => {removerimagen()}}
+                    onPress={() => {removerimagen(imagen)}}
                 />
             ))}
 
         </ScrollView>
     )
 }
+
+//componente para poder elegir la categoria del producto
+
+function Botonera(props) {
+    const { categoria, setcategoria } = props;
+    return (
+      <View style={styles.botonera}>
+        <TouchableOpacity
+          style={styles.btncategoria}
+          onPress={() => {
+            setcategoria("libros");
+          }}
+        >
+          <Icon
+            type="material-community"
+            name="book-open"
+            size={24}
+            color={categoria === "libros" ? "#128c7e" : "#757575"}
+            reverse
+          />
+          <Text>Libros</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btncategoria}
+          onPress={() => {
+            setcategoria("ideas");
+          }}
+        >
+          <Icon
+            type="material-community"
+            name="lightbulb-on-outline"
+            size={24}
+            color={categoria === "ideas" ? "#128c7e" : "#757575"}
+            reverse
+          />
+          <Text>Ideas</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btncategoria}
+          onPress={() => {
+            setcategoria("articulos");
+          }}
+        >
+          <Icon
+            type="material-community"
+            name="cart-arrow-down"
+            size={24}
+            color={categoria === "articulos" ? "#128c7e" : "#757575"}
+            reverse
+          />
+          <Text>Artículos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btncategoria}
+          onPress={() => {
+            setcategoria("servicios");
+          }}
+        >
+          <Icon
+            type="material-community"
+            name="account"
+            size={24}
+            color={categoria === "servicios" ? "#128c7e" : "#757575"}
+            reverse
+          />
+          <Text>Servicios</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
 
 const styles = StyleSheet.create({
     container:{
@@ -170,7 +320,7 @@ const styles = StyleSheet.create({
     },
     textlabel:{
         fontSize:20,
-        fontFamily:"arial",
+        fontFamily:"roboto",
         textAlign:"center",
         fontWeight:"bold",
         color:"#075e54"
@@ -201,6 +351,16 @@ const styles = StyleSheet.create({
         width:100,
         height:150,
         marginRight:10,
+
+    },
+    botonera:{
+        flexDirection:"row",
+        alignItems:"center",
+        justifyContent:"space-around"
+    },
+    btncategoria:{
+        justifyContent:"center",
+        alignItems:"center",
 
     }
 })

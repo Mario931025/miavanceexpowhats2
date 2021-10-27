@@ -264,3 +264,18 @@ export const actualizarTelefono = async (verificationId, code) => {
 };
 
 
+//funcion que se encarga de subir los productos a firebase
+
+export const addRegistro = async(coleccion,data) => {
+
+  const resultado = {error: "", statusreponse: false}
+
+  await db.collection(coleccion)
+  .add(data)
+  .then((response)=> {
+    resultado.statusreponse = true;
+  })
+  .catch((err)=>{
+    resultado.error = err;
+  })
+}
