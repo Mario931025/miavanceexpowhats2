@@ -142,7 +142,7 @@ export const obtenerToken = async () => {
   //recibe el nombre de la coleccion, el documento , y los datos 
   //merge coloca los nuevos datos en firestore en un documento
   export const addRegistroEspecifico = async (coleccion, doc, data) => {
-    const resultado = { error: "", statusreponse: false,data: null };
+    const resultado = { error: "", statusresponse: false,data: null };
   
     await db
       .collection(coleccion)
@@ -228,7 +228,7 @@ export const reautenticar = async (verificationId, code) => {
 };
 
 export const actualizaremailfirebase = async (email)=>{
-  let response = { statusreponse: false}
+  let response = { statusresponse: false}
   await firebase
   .auth()
   .currentUser.updateEmail(email)
@@ -268,14 +268,88 @@ export const actualizarTelefono = async (verificationId, code) => {
 
 export const addRegistro = async(coleccion,data) => {
 
-  const resultado = {error: "", statusreponse: false}
+  const resultado = {error: "", statusresponse: false}
 
   await db.collection(coleccion)
   .add(data)
   .then((response)=> {
-    resultado.statusreponse = true;
+    resultado.statusresponse = true;
   })
   .catch((err)=>{
     resultado.error = err;
   })
 }
+
+//funcion que lista los productos en mi tienda
+//retorna un arreglo de productos
+export const ListarMisProductos = async () => {
+
+  let productos = [];
+
+  await db
+  .collection("Productos")
+  .where("usuario","==",ObtenerUsuario().uid) //campo usuario sea igual al id del usuario
+  .where("status","==",1)//obtiene todos los productos activos 
+  .get()  //obtendra todos los productos de este usuario es el mismo que tiene l usuario cuando inicia sesieon
+  .then((response)=> {
+    response.forEach((doc)=> {
+      const producto = doc.data()
+      producto.id = doc.id;
+      productos.push(producto)
+    })
+  })
+  .catch((err)=> {console.log(err)})
+
+  return productos;
+}
+
+//metodo que modifica el estado activo o inactivo de un producto 
+export const actualizarRegistro = async (coleccion,documento,data) => {
+
+  let response = {statusresponse: false}
+
+  await db.collection(coleccion).doc(documento)
+  .update(data)
+  .then(result => response.statusreponse = true)
+  .catch(err => console.log(err))
+  
+  return response
+
+}
+
+
+//funcion que elimina un producto de la BD
+
+export const eliminarProducto = async (coleccion,documento)=> {
+  let response = {statusresponse: false}
+
+  await db.collection(coleccion).doc(documento)
+  .delete()
+  .then(result => response.statusresponse = true)
+  .catch(err => {console.log(err)})
+
+  return response
+}
+
+
+//funcion que obitiene el producto por id para editarlo 
+export const obternerRegistroxID = async (coleccion, documento) => {
+  let response = { statusresponse: false, data: null };
+
+  await db
+    .collection(coleccion)
+    .doc(documento)
+    .get()
+    .then((result) => {
+      const producto = result.data();
+      producto.id = result.id;
+
+      response.data = producto;
+      response.statusresponse = true;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  return response;
+};

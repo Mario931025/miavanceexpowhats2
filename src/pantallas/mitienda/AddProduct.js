@@ -67,8 +67,9 @@ export default function AddProduct() {
 
             const registarproducto = await addRegistro("Productos", producto);
 
-            if(registarproducto.statusreponse){
-              setloading(false);
+     
+            if(registarproducto.statusresponse){
+               setloading(false);
               Alert.alert(
                 "Registro Exitoso",
                 "El producto se ha registrado correctamente",
@@ -320,7 +321,7 @@ const styles = StyleSheet.create({
     },
     textlabel:{
         fontSize:20,
-        fontFamily:"roboto",
+        fontFamily:"Roboto",
         textAlign:"center",
         fontWeight:"bold",
         color:"#075e54"
