@@ -353,3 +353,61 @@ export const obternerRegistroxID = async (coleccion, documento) => {
 
   return response;
 };
+
+//carga productos de la tienda en la parte principal de la tienda
+//solo mostrará prductos activos
+export const ListarProductos = async () =>{
+  
+  const productoslist = [];
+  let index = 0
+
+  await db.collection("Productos")
+  .where("status" , "==",1)
+  .get()
+  .then(response => {
+    response.forEach((doc)=>{
+        const producto = doc.data()
+        producto.id= doc.id;
+
+        productoslist.push(producto)
+    })
+  })
+  .catch(err => console.log(err))
+
+  for (const registro of productoslist){
+    const usuario = await obternerRegistroxID("Usuarios",registro.usuario)
+    productoslist[index].usuario = usuario.data
+    index ++;
+  }
+
+  return productoslist;
+}
+
+
+//filta los productos que paarecen en el home
+export const listarproductosxcategoria = async(categoria)=>{
+  const productoslist = []
+  let index = 0;
+
+  await db.collection("Productos")
+  .where("status" , "==",1)
+  .where("categoria","==" , categoria)
+  .get()
+  .then(response => {
+    response.forEach((doc)=>{
+        const producto = doc.data()
+        producto.id= doc.id;
+
+        productoslist.push(producto)
+    })
+  })
+  .catch(err => console.log(err))
+
+  for (const registro of productoslist){
+    const usuario = await obternerRegistroxID("Usuarios",registro.usuario)
+    productoslist[index].usuario = usuario.data
+    index ++;
+  }
+
+  return productoslist;
+}
