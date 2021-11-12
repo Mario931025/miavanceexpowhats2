@@ -10,7 +10,7 @@ import { Icon,Avatar,Image,Rating,Badge} from 'react-native-elements'
 import { useNavigation,useFocusEffect } from '@react-navigation/native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { size } from 'lodash'
-import { ListarProductos,ObtenerUsuario,listarproductosxcategoria } from '../../utils/Acciones'
+import { ListarProductos,ObtenerUsuario,listarproductosxcategoria,Buscar } from '../../utils/Acciones'
 import Busqueda from '../../Componentes/Busqueda'
 
 
@@ -19,7 +19,7 @@ export default function Tienda() {
     const navigation = useNavigation()
     const [productlist, setproductlist] = useState([])
     const [search, setsearch] = useState("")
-    const [mensajes, setsetmensajes] = useState("Cargando...")
+    const [mensajes, setmensajes] = useState("Cargando...")
     const [notificaciones, setnotificaciones] = useState(0)
     const {photoURL} = ObtenerUsuario();
     const [categoria, setcategoria] = useState("")
@@ -28,11 +28,22 @@ useEffect(() => {
     (
        async ()=> {
         setproductlist(await ListarProductos())
-        console.log("****productos**")
-        console.log(productlist)
+        
+        console.log(await Buscar("Gat"))
         }
     )()
 }, [])
+
+
+useFocusEffect(
+    useCallback(
+        () => {
+            (async ()=> {
+                setproductlist(await ListarProductos())
+            })()
+        },
+        [], )
+)
 
 const cargarfiltroxcategoria = async(categoria)=> {
 
@@ -81,7 +92,13 @@ const actualizarProductos = async () => {
                             />
                         </View>   
                     </View>
-                <Busqueda />
+                <Busqueda 
+                    setproductlist={setproductlist}
+                    actualizarProductos={actualizarProductos}
+                    setsearch={setsearch}
+                    search={search}
+                    setmensajes={setmensajes}
+                />
                 </KeyboardAwareScrollView>
             </View>
 

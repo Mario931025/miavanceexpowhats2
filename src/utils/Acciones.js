@@ -13,9 +13,13 @@ import {map, result} from 'lodash'
 //para que se conecte a la BD
 //para que se conecte a la BD
 import { convertirFicheroBlobl } from "./Uitl";
+import { FireSQL } from "firesql";
+
 
 const db = firebase.firestore(firebaseapp);
 
+//conecta firessotore con sql
+const fireSQL = new FireSQL(firebase.firestore(), { includeId: "id" });
 //codigo para manejar las notificaciones y personalizarlas
 
 Notifications.setNotificationHandler({
@@ -411,3 +415,15 @@ export const listarproductosxcategoria = async(categoria)=>{
 
   return productoslist;
 }
+
+export const Buscar = async (search) => {
+  let productos = [];
+
+  await fireSQL
+    .query(`SELECT * FROM Productos WHERE titulo LIKE '${search}%' `)
+    .then((response) => {
+      productos = response;
+    });
+
+  return productos;
+};
