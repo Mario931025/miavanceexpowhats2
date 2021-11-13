@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from 'react'
 import { View, Text,StyleSheet,Dimensions,ScrollView } from 'react-native'
 import {Avatar,Icon,Input,Button,Rating} from 'react-native-elements'
-import { obternerRegistroxID,ObtenerUsuario } from '../../utils/Acciones'
+import { obternerRegistroxID,ObtenerUsuario,sendPushNotification } from '../../utils/Acciones'
 import { size } from 'lodash'
 import Loading from '../../Componentes/Loading'
 import CarouselImages from '../../Componentes/CarouselImages'
@@ -101,7 +101,9 @@ export default function Detalle(props) {
                                 color="#25d366"
                                 size={40}
                                 onPress={() =>{
-                                    console.log("Mensaje")
+                                    sendPushNotification("ExponentPushToken[2h_xBRAfwL9INeXgU_EGSV]")
+                                    console.log("presionado")
+                                    
                                 }}
                             />
 

@@ -27,10 +27,7 @@
         "NOTIFICACION",
         "USER_FACING_NOTIFICATIONS"
       ],
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+      "useNextNotificationsApi": true
     },
 
 

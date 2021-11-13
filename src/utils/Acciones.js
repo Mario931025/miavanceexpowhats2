@@ -51,6 +51,8 @@ export const cerrarsesion = () => {
 }
 
 
+
+
 export const validarPhone = (setphoneauth) => {
 
   db.collection("Usuarios")  //solo se aplica cuando el usuario mete # correctamente
@@ -426,4 +428,47 @@ export const Buscar = async (search) => {
     });
 
   return productos;
+};
+
+export const iniciarnotificaciones = (
+  notificationListener,
+  responseListener
+) => {
+  notificationListener.current = Notifications.addNotificationReceivedListener(
+    (notification) => {
+      console.log(notification);
+      console.log("me presionaste chido")
+    }
+  );
+
+  responseListener.current = Notifications.addNotificationResponseReceivedListener(
+    (response) => {
+      console.log(response);
+    }
+  );
+
+  return () => {
+    Notifications.removeNotificationSubscription(notificationListener);
+    Notifications.removeNotificationSubscription(responseListener);
+  };
+};
+
+export const sendPushNotification = async (expoPushToken) => {
+  const message = {
+    to: expoPushToken,
+    sound: 'default',
+    title: 'Original Title',
+    body: 'And here is the body!',
+    data: { someData: 'goes here' },
+  };
+
+  await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Accept-encoding': 'gzip, deflate',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(message),
+  });
 };
