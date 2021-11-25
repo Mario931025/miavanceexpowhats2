@@ -5,7 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 //va a crear la navegacion lateral
 import {createDrawerNavigator} from '@react-navigation/drawer'
 import {Icon} from 'react-native-elements';
-
+import CustomDrawerContent from "../Componentes/CustomDrawerContent";
 import TiendaStack from './TiendaStack';
 import PerfilStack  from './PerfilStack'
 import MiTiendaStack from './MiTiendaStack'
@@ -14,7 +14,7 @@ import ShopBotton from '../Componentes/ShopBotton';
 
 
 const Tab = createBottomTabNavigator();
-const Drawer = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 const TabBar = () => {
     return (
@@ -88,7 +88,20 @@ function motrarIcono(route,color){
 export default function RutasAutenticadas() {
     return(
         <NavigationContainer>
-            <TabBar/>
-        </NavigationContainer>
+      <Drawer.Navigator
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+      >
+        <Drawer.Screen
+          name="Tienda"
+          component={TabBar}
+          options={{
+            title: "Tienda",
+            drawerIcon: () => {
+              <Icon type="material-community" name="store" size={24} />;
+            },
+          }}
+        />
+      </Drawer.Navigator>
+    </NavigationContainer>
     )
 }

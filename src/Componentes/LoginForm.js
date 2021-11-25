@@ -34,7 +34,7 @@ export default function LoginForm(props) {
         .then((response) => {
           setloading(false);
           toastRef.current.show("Ha iniciado sesión exitosamente");
-          console.log(firebase.auth().currentUser);
+          firebase.auth().currentUser;
         })
         .catch((err) => {
           setloading(false);

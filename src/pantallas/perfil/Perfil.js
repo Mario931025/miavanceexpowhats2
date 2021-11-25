@@ -123,8 +123,8 @@ export default function Perfil() {
         { phoneNumber: phoneNumber }
       );
       setupdatephone(false);
-      console.log(telefono);
-      console.log(updateregistro);
+     // console.log(telefono);
+     // console.log(updateregistro);
     } else {
       const resultado = await reautenticar(verificationid, code);
       console.log(resultado);
@@ -136,8 +136,8 @@ export default function Perfil() {
           usuario.uid,
           { email: email }
         );
-        console.log(emailresponse);
-        console.log(updateregistro);
+       // console.log(emailresponse);
+       // console.log(updateregistro);
       } else {
         alert("Ha ocurrido un error al actualizar el correo");
         setloading(false);
@@ -147,7 +147,7 @@ export default function Perfil() {
     setloading(false);
     setisVisible(false);
   };
-  console.log(ObtenerUsuario());
+  ObtenerUsuario();
   return (
     <View>
       <StatusBar backgroundColor="#128c7e" />
@@ -210,7 +210,7 @@ function HeaderAvatar(props) {
         photoURL: url[0],
       });
 
-      if (response.statusreponse) {
+      if (response.statusresponse) {
         setimagenperfil(url[0]);
         setloading(false);
       } else {

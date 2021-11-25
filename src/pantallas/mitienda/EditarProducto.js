@@ -30,7 +30,7 @@ export default function EditarProducto(props) {
     useEffect(() => {
       (async () => {
         const response = await obternerRegistroxID("Productos", id);
-        console.log(response);
+      //  console.log(response);
         const { data } = response;
         settitulo(data.titulo);
         setdescripcion(data.descripcion);
@@ -95,7 +95,7 @@ export default function EditarProducto(props) {
           producto
         );
   
-        if (registrarproducto.statusreponse) {
+        if (registrarproducto.statusresponse) {
           setloading(false);
           Alert.alert(
             "Actualización completa",
@@ -221,7 +221,7 @@ export default function EditarProducto(props) {
             containerStyle={styles.containerIcon}
             onPress={async () => {
               const resultado = await cargarImagenesxAspecto([1, 1]);
-              console.log(resultado);
+            //  console.log(resultado);
               if (resultado.status) {
                 setimagenes([...imagenes, resultado.imagen]);
               }

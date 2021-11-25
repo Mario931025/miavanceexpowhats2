@@ -47,7 +47,7 @@ export const validarsesion = (setvalidarsesion) => {
 
 export const cerrarsesion = () => {
     firebase.auth().signOut();
-    console.log("cerro sesión")
+   // console.log("cerro sesión")
 }
 
 
@@ -157,7 +157,7 @@ export const obtenerToken = async () => {
         merge: true
       }) 
       .then((response) => {
-        resultado.statusreponse = true;
+        resultado.statusresponse = true;
       })
       .catch((err) => {
           resultado.error = err
@@ -239,10 +239,10 @@ export const actualizaremailfirebase = async (email)=>{
   .auth()
   .currentUser.updateEmail(email)
   .then((respuesta) => {
-    response.statusreponse = true
+    response.statusresponse = true
   })
   .catch((err)=> {
-    response.statusreponse = false
+    response.statusresponse = false
   })
 
   return response;
@@ -250,8 +250,8 @@ export const actualizaremailfirebase = async (email)=>{
 
 export const actualizarTelefono = async (verificationId, code) => {
   let response = { statusresponse: false };
-  console.log(verificationId);
-  console.log(code);
+ // console.log(verificationId);
+ // console.log(code);
 
   const credenciales = new firebase.auth.PhoneAuthProvider.credential(
     verificationId,
@@ -284,6 +284,8 @@ export const addRegistro = async(coleccion,data) => {
   .catch((err)=>{
     resultado.error = err;
   })
+
+  return resultado;
 }
 
 //funcion que lista los productos en mi tienda
@@ -436,14 +438,14 @@ export const iniciarnotificaciones = (
 ) => {
   notificationListener.current = Notifications.addNotificationReceivedListener(
     (notification) => {
-      console.log(notification);
-      console.log("me presionaste chido")
+     // console.log(notification);
+     // console.log("me presionaste chido")
     }
   );
 
   responseListener.current = Notifications.addNotificationResponseReceivedListener(
     (response) => {
-      console.log(response);
+     // console.log(response);
     }
   );
 
@@ -453,22 +455,64 @@ export const iniciarnotificaciones = (
   };
 };
 
-export const sendPushNotification = async (expoPushToken) => {
+
+export const sendPushNotification = async (mensaje) => {
+  let respuesta = false;
+  await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(mensaje),
+  }).then((response) => {
+    respuesta = true;
+  });
+
+  return respuesta;
+};
+
+export const setMensajeNotificacion = (token, titulo, body, data) => {
   const message = {
-    to: expoPushToken,
-    sound: 'default',
-    title: 'Original Title',
-    body: 'And here is the body!',
-    data: { someData: 'goes here' },
+    to: token,
+    sound: "default",
+    title: titulo,
+    body: body,
+    data: data,
   };
 
-  await fetch('https://exp.host/--/api/v2/push/send', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Accept-encoding': 'gzip, deflate',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(message),
-  });
+  return message;
+};
+
+//funcion para las notificaciones de la app
+//receiver es el userid y visto valor 0= no visto
+export const ListarNotificaciones = async () => {
+  let respuesta = { statusresponse: false, data: [] };
+
+  let index = 0;
+
+  await db
+    .collection("Notificaciones")
+    .where("receiver", "==", ObtenerUsuario().uid)
+    .where("visto", "==", 0)
+    .get()
+    .then((response) => {
+      let datos;
+
+      response.forEach((doc) => {
+        datos = doc.data();
+        datos.id = doc.id;
+        respuesta.data.push(datos);
+      });
+      respuesta.statusresponse = true;
+    });
+
+  for (const notificacion of respuesta.data) {
+    const usuario = await obternerRegistroxID("Usuarios", notificacion.sender);
+    respuesta.data[index].sender = usuario.data;
+    index++;
+  }
+
+  return respuesta;
 };

@@ -1,8 +1,10 @@
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
+import { Alert, Linking } from "react-native";
+import { size } from "lodash";
 
 export function validateEmail(email) {
-    console.log(email)
+   // console.log(email)
       const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
     }
@@ -32,3 +34,19 @@ export const convertirFicheroBlobl = async (rutafisica)=>{
   return blob;
 
 }
+
+//nos abrira whatsapp
+export const enviarWhatsapp = (numero, text) => {
+  //nos quita el simbolo + del telefono
+  let link = `whatsapp://send?phone=${numero.substring(
+    1,
+    size(numero)
+  )}&text=${text}`;
+  Linking.canOpenURL(link).then((supported) => {
+    if (!supported) {
+      Alert.alert("Favor instale whatsapp para enviar un mensaje directo");
+    } else {
+      return Linking.openURL(link);
+    }
+  });
+};

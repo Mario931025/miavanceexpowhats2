@@ -10,7 +10,7 @@ import { Icon,Avatar,Image,Rating,Badge} from 'react-native-elements'
 import { useNavigation,useFocusEffect } from '@react-navigation/native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { size } from 'lodash'
-import { ListarProductos,ObtenerUsuario,listarproductosxcategoria,Buscar } from '../../utils/Acciones'
+import { ListarProductos,ObtenerUsuario,listarproductosxcategoria,Buscar,ListarNotificaciones } from '../../utils/Acciones'
 import Busqueda from '../../Componentes/Busqueda'
 
 
@@ -24,26 +24,32 @@ export default function Tienda() {
     const {photoURL} = ObtenerUsuario();
     const [categoria, setcategoria] = useState("")
 
-useEffect(() => {
-    (
-       async ()=> {
-        setproductlist(await ListarProductos())
-        
-        console.log(await Buscar("Gat"))
-        }
-    )()
-}, [])
+    useEffect(() => {
+        (async () => {
+          setnotificaciones(0);
+          setproductlist(await ListarProductos());
+    
+          const consulta = await ListarNotificaciones();
+          if (consulta.statusresponse) {
+            setnotificaciones(size(consulta.data));
+            console.log(size(consulta.data));
+          }
+        })();
+      }, []);
 
 
-useFocusEffect(
-    useCallback(
-        () => {
-            (async ()=> {
-                setproductlist(await ListarProductos())
-            })()
-        },
-        [], )
-)
+      useFocusEffect(
+        useCallback(() => {
+          (async () => {
+            setnotificaciones(0);
+            setproductlist(await ListarProductos());
+            const consulta = await ListarNotificaciones();
+            if (consulta.statusresponse) {
+              setnotificaciones(size(consulta.data));
+            }
+          })();
+        }, [])
+      );
 
 const cargarfiltroxcategoria = async(categoria)=> {
 
@@ -72,6 +78,7 @@ const actualizarProductos = async () => {
                         rounded
                         size={45}
                         source={photoURL ? { uri:photoURL}:require("../../../assets/avatar.jpg") }
+                        onPress={()=> navigation.toggleDrawer()}
                         />
 
                         <Image
@@ -84,12 +91,17 @@ const actualizarProductos = async () => {
                             name="bell-outline"
                             color="#fff"
                             size={30}
+                            onPress={() => {
+                                navigation.navigate("mensajes");
+                              }}
                             />
+                           {notificaciones > 0 && (
                             <Badge
-                            status="error"
-                            containerStyle={{position:"absolute",top:-4,right:-4}}
-                            value={2}
+                                 status="error"
+                                 containerStyle={{ position: "absolute", top: -4, right: -4 }}
+                                value={notificaciones}
                             />
+                             )}
                         </View>   
                     </View>
                 <Busqueda 
